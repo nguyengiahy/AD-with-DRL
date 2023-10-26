@@ -22,6 +22,7 @@ class PositionalEmbedding(nn.Module):
         # - d_model: the size of the 1D embedding vector. It's 512 in the original paper
         # - seq_len: the maximum length of the input sentence
         # - dropout: for regularisation
+        super().__init__()
         self.d_model = d_model
         self.seq_len = seq_len
         self.dropout = nn.Dropout(dropout)
@@ -30,9 +31,10 @@ class PositionalEmbedding(nn.Module):
         pe = torch.zeros(seq_len, d_model)
 
         # Calculate the PE for every position up to the maximum sequence length
-        position = torch.arange(0, seq_len, dtype=torch.float).unsqueeze(1)         # Create a tensor of shape (seq_len, 1) that stores the position of each token with respect to the sequence
-        pe[:, 0::2] = torch.sin(position / (10000 ** ((2*i)/self.d_model)))
-        pe[:, 1::2] = torch.cos(position / (10000 ** ((2*(i+1))/self.d_model)))
+        for pos in range(seq_len):
+            for i in range(0, self.d_model, 2):
+                pe[:, 0::2] = math.sin(pos / (10000 ** ((2*i)/self.d_model)))
+                pe[:, 1::2] = math.cos(pos / (10000 ** ((2*(i+1))/self.d_model)))
 
         # Add batch dimension to PE
         pe = pe.unsqueeze(0)        # pe = (1, seq_len, d_model)
@@ -83,6 +85,7 @@ class MultiHeadAttention(nn.Module):
         # Params:
         # - d_model: the size of the 1D embedding vector. It's 512 in the original paper
         # - h: number of heads for multi-head attention
+        super().__init__()
         self.d_model = d_model
         self.h = h
         assert d_model % h == 0, "d_model is not divisible by h"
