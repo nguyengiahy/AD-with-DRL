@@ -31,7 +31,7 @@ class BilingualDataset(Dataset):
 
         # Pad the sentence to reach the seq_len
         src_num_padding = self.seq_len - len(src_token_ids) - 2         # -2 for the [START] and [END] tokens
-        tgt_num_padding = self.seq_len - len(src_token_ids) - 2         # -1 because in decoder, we only add the [START] token, it has to generate token [END] by itself
+        tgt_num_padding = self.seq_len - len(src_token_ids) - 1         # -1 because in decoder, we only add the [START] token, it has to generate token [END] by itself
 
         if src_num_padding < 0 or tgt_num_padding < 0:
             raise ValueError('Sentence is too long')
